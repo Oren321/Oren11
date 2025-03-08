@@ -1,5 +1,5 @@
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
-local Window = Library.CreateLib("Project Fred", "Midnight")
+local Window = Library.CreateLib("Project Fred")
 
 --AutoTab
 local Auto = Window:NewTab("Auto Roll")
@@ -11,9 +11,14 @@ local Auto3 = Window:NewTab("Auto Mine")
 local AutoMine = Auto3:NewSection("Auto Mine")
 local Auto4 = Window:NewTab("Auto Theive")
 local AutoTheive = Auto4:NewSection("Auto Theive")
+local AutoBuy = Window:NewTab("Auto Buy")
+local AutoBuyMerchants = AutoBuy:NewSection("Merchants")
+local Misc = Window:NewTab("Misc")
+local Misc = Misc:NewSection("Misc")
+
 
 --AutoRoll Toggle
-AutoRoll:NewToggle("Auto Roll Pets", "AutoRolls", function(v)
+AutoRoll:NewToggle("Auto Roll", "AutoRolls", function(v)
     getgenv().Eggs_Roll = v
     while true do
         if getgenv().Eggs_Roll == false then return end
@@ -44,16 +49,13 @@ end)
 AutoFish:NewToggle("Auto Fish Corrupted", "Corrupted Fishing Area", function(v)
     getgenv().AutoFish = v
     while getgenv().AutoFish do
-        local args = {
-            "Corrupted"
-        }
-        game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Fishing_Fish"):InvokeServer(unpack(args))
+        game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Fishing_Fish"):InvokeServer("Corrupted")
         game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Fishing_Success"):FireServer()        
         task.wait()
     end
 end)
 
-AutoFish:NewToggle("Auto Fish Boating", "Boating Fishing Area", function(v)
+AutoFish:NewToggle("Auto Fish Boat", "Boating Fishing Area", function(v)
     getgenv().AutoFish = v
     while getgenv().AutoFish do
         game:GetService("ReplicatedStorage").Network.Fishing_Fish:InvokeServer("Boating")
@@ -62,7 +64,7 @@ AutoFish:NewToggle("Auto Fish Boating", "Boating Fishing Area", function(v)
     end
 end)
 
-AutoCollectFishermanLoot:NewToggle("Auto Collect Fisherman Loot Every 30 Secs", "Auto Collects The Loot Gained From The Fisherman Every 30 Seconds", function(v)
+AutoCollectFishermanLoot:NewToggle("Auto Collect Fisherman Loot", "Auto Collects The Loot Gained From The Fisherman Every 30 Seconds", function(v)
     getgenv().AutoFish = v
     while getgenv().AutoFish do
         game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Fishing_FishermanClaim"):InvokeServer()
@@ -175,6 +177,19 @@ AutoMine:NewToggle("Auto Mine Runic", "Auto Mines Runic", function(v)
     end
 end)
 
+AutoMine:NewToggle("Auto Mine Magma", "Auto Mines Magma", function(v)
+    if v then
+        getgenv().AutoMine = true
+        while getgenv().AutoMine do
+            game:GetService("ReplicatedStorage").Network.Mining_SetState:InvokeServer(true)
+            game:GetService("ReplicatedStorage").Network.Mining_Attack:InvokeServer(11)
+            task.wait()
+        end
+    else  -- If the toggle is off
+        getgenv().AutoMine = false
+    end
+end)
+
 --Thieving Toggles
 AutoTheive:NewButton("Busted Shack", "AutoThieves Busted Stall", function()
     local player = game.Players.LocalPlayer
@@ -264,4 +279,261 @@ AutoTheive:NewButton("Hacker Stall", "AutoThieves Hacker Stall", function()
     local targetPosition = game:GetService("ReplicatedStorage").__DIRECTORY.ThievingObjects["ThievingObject 9 | Hacker Stall"].Model.Pad.PadGlow.Position
 
     humanoidRootPart.CFrame = CFrame.new(targetPosition)
+end)
+
+--AutoBuy
+AutoBuyMerchants:NewToggle("Auto Buy Vending Machine", "Buys Everything From The Vending Machine", function(v)
+    if v then
+        getgenv().AutoBuyVendingMachine = true
+        while getgenv().AutoBuyVendingMachine do
+            local args = {
+            [1] = "PotionVendingMachine"
+            }
+            game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("VendingMachines_Purchase"):InvokeServer(unpack(args))
+            task.wait(10)
+        end
+    else  -- If the toggle is off
+        getgenv().AutoBuyVendingMachine = false
+    end
+end)
+
+AutoBuyMerchants:NewToggle("Auto Buy Standard Merchant", "Auto Buys Standard Merchant", function(v)
+    if v then
+        getgenv().AutoBuyStandardMerchant = true
+        while getgenv().AutoBuyStandardMerchant do
+        local args = {
+    [1] = "StandardMerchant",
+    [2] = 1
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
+local args = {
+    [1] = "StandardMerchant",
+    [2] = 2
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
+local args = {
+    [1] = "StandardMerchant",
+    [2] = 3
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
+local args = {
+    [1] = "StandardMerchant",
+    [2] = 4
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
+local args = {
+    [1] = "StandardMerchant",
+    [2] = 5
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
+local args = {
+    [1] = "StandardMerchant",
+    [2] = 6
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
+        task.wait(10)
+    end
+else
+        getgenv().AutoBuyStandardMerchant = false
+    end
+end)
+
+AutoBuyMerchants:NewToggle("Auto Buy Fishing Merchant", "Buys Everything From The Fishing Merchant", function(v)
+    if v then
+        getgenv().AutoBuyFishingMerchant = true
+        while getgenv().AutoBuyFishingMerchant do
+        local args = {
+    [1] = "FishingMerchant",
+    [2] = 1
+}
+    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
+        local args = {
+    [1] = "FishingMerchant",
+    [2] = 2
+}
+    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
+        local args = {
+    [1] = "FishingMerchant",
+    [2] = 3
+}
+    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
+        local args = {
+    [1] = "FishingMerchant",
+    [2] = 4
+}
+    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
+        local args = {
+    [1] = "FishingMerchant",
+    [2] = 5
+}
+    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
+        local args = {
+    [1] = "FishingMerchant",
+    [2] = 6
+}
+    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
+        task.wait(10)
+    end
+else
+        getgenv().AutoBuyFishingMerchant = false
+    end
+end)
+
+AutoBuyMerchants:NewToggle("Auto Buy Ice Merchant", "Auto Buys Ice Merchant", function(v)
+    if v then
+        getgenv().AutoBuyIceFishingMerchant = true
+        while getgenv().AutoBuyIceFishingMerchant do
+        local args = {
+    [1] = "IceFishingMerchant",
+    [2] = 1
+}
+    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
+        local args = {
+    [1] = "IceFishingMerchant",
+    [2] = 2
+}
+    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
+        local args = {
+    [1] = "IceFishingMerchant",
+    [2] = 3
+}
+    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
+        local args = {
+    [1] = "IceFishingMerchant",
+    [2] = 4
+}
+    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
+        local args = {
+    [1] = "IceFishingMerchant",
+    [2] = 5
+}
+    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
+        local args = {
+    [1] = "IceFishingMerchant",
+    [2] = 6
+}
+    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
+        task.wait(10)
+    end
+else
+        getgenv().AutoBuyIceFishingMerchant = false
+    end
+end)
+
+AutoBuyMerchants:NewToggle("Auto Buy Mining Merchant", "Auto Buys Mining Merchant", function(v)
+    if v then
+        getgenv().AutoBuyIceFishingMerchant = true
+        while getgenv().AutoBuyIceFishingMerchant do
+        local args = {
+    [1] = "MiningMerchant",
+    [2] = 1
+}
+    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
+        local args = {
+    [1] = "MiningMerchant",
+    [2] = 2
+}
+    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
+        local args = {
+    [1] = "MiningMerchant",
+    [2] = 3
+}
+    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
+        local args = {
+    [1] = "MiningMerchant",
+    [2] = 4
+}
+    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
+        local args = {
+    [1] = "MiningMerchant",
+    [2] = 5
+}
+    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
+        local args = {
+    [1] = "MiningMerchant",
+    [2] = 6
+}
+    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
+    local args = {
+    [1] = "MiningMerchant",
+    [2] = 7
+    }
+    
+    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
+    local args = {
+    [1] = "MiningMerchant",
+    [2] = 8
+    }
+    
+    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
+        task.wait(10)
+    end
+else
+    getgenv().AutoBuyIceFishingMerchant = false
+    end
+end)
+
+AutoBuyMerchants:NewToggle("Auto Buy BlackMarket Merchant", "Auto Buys BlackMarket Merchant", function(v)
+    if v then
+        getgenv().AutoBuyIceFishingMerchant = true
+        while getgenv().AutoBuyIceFishingMerchant do
+        local args = {
+    [1] = "BlackMarketMerchant",
+    [2] = 1
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
+local args = {
+    [1] = "BlackMarketMerchant",
+    [2] = 2
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
+local args = {
+    [1] = "BlackMarketMerchant",
+    [2] = 3
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
+local args = {
+    [1] = "BlackMarketMerchant",
+    [2] = 4
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
+local args = {
+    [1] = "BlackMarketMerchant",
+    [2] = 5
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
+local args = {
+    [1] = "BlackMarketMerchant",
+    [2] = 6
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
+local args = {
+    [1] = "BlackMarketMerchant",
+    [2] = 7
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
+local args = {
+    [1] = "BlackMarketMerchant",
+    [2] = 8
+}
+
+    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
+        task.wait(10)
+    end
+else
+        getgenv().AutoBuyIceFishingMerchant = false
+    end
 end)
