@@ -1,34 +1,74 @@
--- Required modules
-local InventoryCmds = require(game.ReplicatedStorage.Library.Client.InventoryCmds)
-local LockpickItem = require(game.ReplicatedStorage.Library.Items.LockpickItem)
-local Save = require(game.ReplicatedStorage.Library.Client.Save)
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local InventoryCmds = require(ReplicatedStorage.Library.Client.InventoryCmds)
+local LockpickItem = require(ReplicatedStorage.Library.Items.LockpickItem)
+local Save = require(ReplicatedStorage.Library.Client.Save)
 
--- Function to print all lockpick info
-local function printAllLockpicks()
-    -- Get save data first
+local ThieveEvent = ReplicatedStorage:FindFirstChild("ThieveEvent") -- Assuming there's a RemoteEvent
+
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+
+-- Get the currently selected lockpick UID
+local function getCurrentLockpickUID()
     local saveData = Save.Get()
-    local currentUID = saveData and saveData.SelectedLockpick and saveData.SelectedLockpick.uid
+    if saveData and saveData.SelectedLockpick then
+        return saveData.SelectedLockpick.uid
+    end
+    return nil
+end
 
-    print("Currently Selected Lockpick:", currentUID or "None")
-    print("
-All Available Lockpicks:")
-
-    -- Get container
+-- Check if the player has a lockpick
+local function hasLockpick(lockpickUID)
     local container = InventoryCmds.Container()
     if container then
-        -- Loop through all items
-        for _, item in pairs(container:GetAll()) do
-            if item:IsA("LockpickItem") then
-                local itemData = item:Directory()
-                print("------------------------")
-                print("UID:", item:GetUID())
-                print("Type:", itemData.Name)
-                print("Tier:", itemData.Order)
-                print("Rarity:", itemData.Rarity.Name)
+        local lockpick = container:Get(lockpickUID, LockpickItem)
+        return lockpick ~= nil
+    end
+    return false
+end
+
+-- Find the nearest stealable object
+local function getNearestStealable()
+    local nearest, minDist = nil, math.huge
+    if not character or not character.PrimaryPart then return nil end
+
+    for _, obj in pairs(workspace:GetChildren()) do
+        if obj:IsA("Model") and obj:FindFirstChild("Stealable") then
+            local dist = (character.PrimaryPart.Position - obj.PrimaryPart.Position).Magnitude
+            if dist < minDist then
+                nearest, minDist = obj, dist
             end
         end
     end
+    return nearest
 end
 
--- Print all lockpicks
-printAllLockpicks()
+-- Attempt to steal
+local function autoThieve()
+    local lockpickUID = getCurrentLockpickUID()
+    if not lockpickUID or not hasLockpick(lockpickUID) then
+        warn("[AutoThieve] No lockpick found!")
+        return
+    end
+
+    local target = getNearestStealable()
+    if not target then
+        warn("[AutoThieve] No target to steal from!")
+        return
+    end
+
+    print("[AutoThieve] Attempting to steal from:", target.Name)
+
+    if ThieveEvent then
+        ThieveEvent:FireServer(target, lockpickUID) -- Assuming a RemoteEvent handles stealing
+    else
+        warn("[AutoThieve] ThieveEvent not found!")
+    end
+end
+
+-- Automatically run every few seconds
+while true do
+    autoThieve()
+    wait(5) -- Adjust delay as needed
+end
