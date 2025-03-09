@@ -554,38 +554,45 @@ else
     end
 end)
 
-AutoUse:NewToggle("Auto Use Apples", "Auto Uses Apples", function(v)
+AutoUse:NewToggle("Auto Use Every Fruit", "Auto Uses EveryFruit", function(v)
     if v then
         getgenv().AutoUse = true
-        while getgenv().AutoUse do
-		local args = {
-    [1] = "c650e9c555d846e986d6c809bf3a0c82",
-    [2] = 20
-}
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Fruits: Consume"):InvokeServer(unpack(args))
-local args = {
-    [1] = "e0356764ed5d469bb4a8b1c228fba4e2",
-    [2] = 20
-}
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Fruits: Consume"):InvokeServer(unpack(args))
-local args = {
-    [1] = "5d58671aade94c1dacae826741432804",
-    [2] = 20
-}
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Fruits: Consume"):InvokeServer(unpack(args))
-local args = {
-    [1] = "307925f4d8b842c7bc5754b1d35f51f6",
-    [2] = 20
-}
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Fruits: Consume"):InvokeServer(unpack(args))
-local args = {
-    [1] = "7a73b7804beb43d2926acd20599a43cd",
-    [2] = 20
-}
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Fruits: Consume"):InvokeServer(unpack(args))
-            task.wait(5)
-        end
-    else  -- If the toggle is off
+        -- Execute once
+        local args = {
+            [1] = "c650e9c555d846e986d6c809bf3a0c82",
+            [2] = 20
+        }
+        game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Fruits: Consume"):InvokeServer(unpack(args))
+        
+        local args = {
+            [1] = "e0356764ed5d469bb4a8b1c228fba4e2",
+            [2] = 20
+        }
+        game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Fruits: Consume"):InvokeServer(unpack(args))
+        
+        local args = {
+            [1] = "5d58671aade94c1dacae826741432804",
+            [2] = 20
+        }
+        game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Fruits: Consume"):InvokeServer(unpack(args))
+        
+        local args = {
+            [1] = "307925f4d8b842c7bc5754b1d35f51f6",
+            [2] = 20
+        }
+        game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Fruits: Consume"):InvokeServer(unpack(args))
+        
+        local args = {
+            [1] = "7a73b7804beb43d2926acd20599a43cd",
+            [2] = 20
+        }
+        game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Fruits: Consume"):InvokeServer(unpack(args))
+        
+        -- Wait for 20 seconds before the script executes again
+        task.wait(20)
+        
+    else
+        -- If the toggle is off, set AutoUse to false
         getgenv().AutoUse = false
     end
 end)
