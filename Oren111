@@ -45,41 +45,42 @@ Event2:NewToggle("Auto Collect Hopper Loot", "Auto Collects The Loot Gained From
 end)
 
 Event2:NewToggle("Auto Collect Clovers", "Auto Collects Clovers", function(v)
+    -- When toggle is turned on (v = true) or off (v = false)
+    getgenv().toggleScript = v  -- Set to true to start the script, false to stop it
 
--- Toggle variable using getgenv()
-getgenv().toggleScript = true  -- Set to true to start the script, false to stop it
+    -- If toggle is on, start collecting clovers
+    if getgenv().toggleScript then
+        local clovers = workspace.__THINGS:FindFirstChild("Clovers")
+        if not clovers then
+            warn("Clovers folder not found!")
+            return
+        end
 
-local clovers = workspace.__THINGS:FindFirstChild("Clovers")
-if not clovers then
-    warn("Clovers folder not found!")
-    return
-end
-
-local function fireTouchInterest(model)
-    for _, part in ipairs(model:GetDescendants()) do
-        if part:IsA("BasePart") then
-            for _, child in ipairs(part:GetChildren()) do
-                if child:IsA("TouchTransmitter") then
-                    firetouchinterest(part, game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character.PrimaryPart or part, 0) -- Start touch
-                    task.wait(0) -- Small delay
-                    firetouchinterest(part, game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character.PrimaryPart or part, 1) -- End touch
+        local function fireTouchInterest(model)
+            for _, part in ipairs(model:GetDescendants()) do
+                if part:IsA("BasePart") then
+                    for _, child in ipairs(part:GetChildren()) do
+                        if child:IsA("TouchTransmitter") then
+                            firetouchinterest(part, game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character.PrimaryPart or part, 0) -- Start touch
+                            task.wait(0) -- Small delay
+                            firetouchinterest(part, game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character.PrimaryPart or part, 1) -- End touch
+                        end
+                    end
                 end
             end
         end
-    end
-end
 
-while true do
-    -- Check toggle status before proceeding
-    if getgenv().toggleScript then
-        for _, model in ipairs(clovers:GetChildren()) do
-            if model:IsA("Model") then
-                fireTouchInterest(model)
+        while getgenv().toggleScript do
+            -- Run collection process while toggleScript is true
+            for _, model in ipairs(clovers:GetChildren()) do
+                if model:IsA("Model") then
+                    fireTouchInterest(model)
+                end
             end
+            task.wait() -- Adjust delay as needed
         end
     end
-    task.wait() -- Adjust delay as needed
-end
+end)
 
 Event2:NewToggle("Auto Buy & Upgrade Patches", "Auto Upgrades Clover Patches", function(v)
     if v then
