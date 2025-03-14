@@ -45,48 +45,41 @@ Event2:NewToggle("Auto Collect Hopper Loot", "Auto Collects The Loot Gained From
 end)
 
 Event2:NewToggle("Auto Collect Clovers", "Auto Collects Clovers", function(v)
-    if v then
-        getgenv().AutoCollectClover = true
-        while getgenv().AutoCollectClover do
-            
-local player = game.Players.LocalPlayer
 
+-- Toggle variable using getgenv()
+getgenv().toggleScript = true  -- Set to true to start the script, false to stop it
 
-local cloversFolder = workspace:WaitForChild("__THINGS"):WaitForChild("Clovers")
+local clovers = workspace.__THINGS:FindFirstChild("Clovers")
+if not clovers then
+    warn("Clovers folder not found!")
+    return
+end
 
-
-local function teleportPlayerToCloversChildren()
-    -- Get the player's character
-    local character = player.Character or player.CharacterAdded:Wait()
-
-   
-    if character and character:FindFirstChild("HumanoidRootPart") then
-       
-        for _, child in ipairs(cloversFolder:GetChildren()) do
-            if child:IsA("BasePart") then
-               
-                character:SetPrimaryPartCFrame(CFrame.new(child.Position + Vector3.new(0, 5, 0)))  
-                return  
-            elseif child:IsA("Model") and child.PrimaryPart then
-                
-                character:SetPrimaryPartCFrame(CFrame.new(child.PrimaryPart.Position + Vector3.new(0, 5, 0)))  
-                return  
+local function fireTouchInterest(model)
+    for _, part in ipairs(model:GetDescendants()) do
+        if part:IsA("BasePart") then
+            for _, child in ipairs(part:GetChildren()) do
+                if child:IsA("TouchTransmitter") then
+                    firetouchinterest(part, game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character.PrimaryPart or part, 0) -- Start touch
+                    task.wait(0) -- Small delay
+                    firetouchinterest(part, game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character.PrimaryPart or part, 1) -- End touch
+                end
             end
         end
-        warn("No valid children to teleport to!")
-    else
-        warn("Player's character or HumanoidRootPart not found!")
     end
 end
 
-teleportPlayerToCloversChildren()
-
-            task.wait(0.6)
+while true do
+    -- Check toggle status before proceeding
+    if getgenv().toggleScript then
+        for _, model in ipairs(clovers:GetChildren()) do
+            if model:IsA("Model") then
+                fireTouchInterest(model)
+            end
         end
-    else  -- If the toggle is off
-        getgenv().AutoCollectClover = false
     end
-end)
+    task.wait() -- Adjust delay as needed
+end
 
 Event2:NewToggle("Auto Buy & Upgrade Patches", "Auto Upgrades Clover Patches", function(v)
     if v then
