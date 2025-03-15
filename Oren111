@@ -4,6 +4,8 @@ local Window = Library.CreateLib("Project Fred")
 --AutoTab
 local Event = Window:NewTab("Clover Event")
 local Event2 = Event:NewSection("Event")
+local Event3 = Event:NewSection("Auto Potions")
+local Event4 = Event:NewSection("Auto Charge Tokens")
 local Auto = Window:NewTab("Auto Roll")
 local AutoRoll = Auto:NewSection("Auto Roll")
 local Auto2 = Window:NewTab("Auto Fish")
@@ -23,18 +25,17 @@ local Settings = Window:NewTab("Settings")
 local Settings2 = Settings:NewSection("GUI Settings")
 local Credits = Window:NewTab("Credits")
 local Credits1 = Credits:NewSection("Fred - Programming & Design")
-local Credits2 = Credits:NewSection("Massy - Programming, Branding & Key System")
+local Credits2 = Credits:NewSection("Massy - Progamming & Branding")
 
 
---Event Tab
---Event2:NewToggle("Roll Clover Egg", "Auto Rolls The Clover Egg", function(v)
---    getgenv().Eggs_Roll2 = v
---    while true do
---        if getgenv().Eggs_Roll2 == false then return end
---        game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Clovers_HatchEgg"):InvokeServer()
---        task.wait()
---    end
---end)
+Event2:NewToggle("Roll Clover Egg", "Auto Rolls The Clover Egg", function(v)
+    getgenv().Eggs_Roll2 = v
+    while true do
+        if getgenv().Eggs_Roll2 == false then return end
+        game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Clovers_HatchEgg"):InvokeServer()
+        task.wait(16)
+    end
+end)
 
 Event2:NewToggle("Auto Collect Hopper Loot", "Auto Collects The Loot Gained From The Hopper Every 30 Seconds", function(v)
     getgenv().AutoFish = v
@@ -45,40 +46,29 @@ Event2:NewToggle("Auto Collect Hopper Loot", "Auto Collects The Loot Gained From
 end)
 
 Event2:NewToggle("Auto Collect Clovers", "Auto Collects Clovers", function(v)
-    -- When toggle is turned on (v = true) or off (v = false)
-    getgenv().toggleScript = v  -- Set to true to start the script, false to stop it
+    if v then
+        getgenv().AutoCollectClover = true
+        while getgenv().AutoCollectClover do
+local clovers = workspace.__THINGS.Clovers
 
-    -- If toggle is on, start collecting clovers
-    if getgenv().toggleScript then
-        local clovers = workspace.__THINGS:FindFirstChild("Clovers")
-        if not clovers then
-            warn("Clovers folder not found!")
-            return
-        end
+local function fireTouchInterest(part)
+    local playerChar = game.Players.LocalPlayer.Character
+    local primaryPart = playerChar and playerChar.PrimaryPart or part
+    firetouchinterest(part, primaryPart, 0)
+    firetouchinterest(part, primaryPart, 1)
+end
 
-        local function fireTouchInterest(model)
-            for _, part in ipairs(model:GetDescendants()) do
-                if part:IsA("BasePart") then
-                    for _, child in ipairs(part:GetChildren()) do
-                        if child:IsA("TouchTransmitter") then
-                            firetouchinterest(part, game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character.PrimaryPart or part, 0) -- Start touch
-                            task.wait(0) -- Small delay
-                            firetouchinterest(part, game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character.PrimaryPart or part, 1) -- End touch
-                        end
-                    end
-                end
-            end
+while true do
+    for _, model in pairs(clovers:GetChildren()) do
+        local part = model:FindFirstChild("Part")
+        if part then
+            fireTouchInterest(part)
         end
-
-        while getgenv().toggleScript do
-            -- Run collection process while toggleScript is true
-            for _, model in ipairs(clovers:GetChildren()) do
-                if model:IsA("Model") then
-                    fireTouchInterest(model)
-                end
-            end
-            task.wait() -- Adjust delay as needed
-        end
+    end
+    task.wait()
+end
+    else  -- If the toggle is off
+        getgenv().AutoCollectClover = false
     end
 end)
 
@@ -590,6 +580,78 @@ Event2:NewToggle("Auto Buy Clover Merchant", "Auto Buys Clover Merchant", functi
     end
 else
     getgenv().AutoBuyCloverMerchant = false
+    end
+end)
+
+Event3:NewToggle("Auto Use Harvesting Speed Potion", "Auto Uses Harvesting Speed Potion", function(v)
+    getgenv().Consumables_Consume = v
+    while getgenv().Consumables_Consume do
+        local args = {
+            [1] = "5c9d7c8b323c494985773474b760ab7d",
+            [2] = 5
+        }
+        game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Consumables_Consume"):InvokeServer(unpack(args))
+        task.wait(600)
+    end
+end)
+
+Event3:NewToggle("Auto Use Clover Power Potion", "Auto Uses Clover Power Potion", function(v)
+    getgenv().Consumables_Consume = v
+    while getgenv().Consumables_Consume do
+local args = {
+    [1] = "17674e60b22d4daf9b0e9c88fa7f7f78",
+    [2] = 5
+}
+game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Consumables_Consume"):InvokeServer(unpack(args))
+        task.wait(600)
+    end
+end)
+
+Event3:NewToggle("Auto Use Clover Loot Potion", "Auto Uses Clover Loot Potion", function(v)
+    getgenv().Consumables_Consume = v
+    while getgenv().Consumables_Consume do
+local args = {
+    [1] = "d09392dfcd3d433080b998132f61817a",
+    [2] = 5
+}
+game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Consumables_Consume"):InvokeServer(unpack(args))
+        task.wait(600)
+    end
+end)
+
+Event3:NewToggle("Auto Use Lucky Rain Potion", "Auto Uses Lucky Rain Potion", function(v)
+    getgenv().Consumables_Consume = v
+    while getgenv().Consumables_Consume do
+local args = {
+    [1] = "2a6fb7836eed4a1ca562b17a64c35196",
+    [2] = 1
+}
+game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Consumables_Consume"):InvokeServer(unpack(args))
+        task.wait(61)
+    end
+end)
+
+Event4:NewToggle("Auto Use Instant Charge Token", "Auto Uses Instant Charge Token", function(v)
+    getgenv().Consumables_Consume = v
+    while getgenv().Consumables_Consume do
+local args = {
+    [1] = "ac6c80cca1b945df807d82176ed13c18",
+    [2] = 1
+}
+game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Consumables_Consume"):InvokeServer(unpack(args))
+        task.wait(10)
+    end
+end)
+
+Event4:NewToggle("Auto Use Huge Instant Charge Token", "Auto Uses The Huge Instant Charge Token", function(v)
+    getgenv().Consumables_Consume = v
+    while getgenv().Consumables_Consume do
+local args = {
+    [1] = "56054a58f55c4099a508e8acf262276a",
+    [2] = 1
+}
+game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Consumables_Consume"):InvokeServer(unpack(args))
+        task.wait(10)
     end
 end)
 
