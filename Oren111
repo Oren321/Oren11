@@ -161,7 +161,38 @@ local Toggle = Tabs.Event:AddToggle("Event",
 local MultiDropdown = Tabs.Event:AddDropdown("MultiDropdown", {
     Title = "Dropdown",
     Description = "You can select multiple values.",
-    Values = {"one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen"},
+    Values = {"one", "two", "three", "four", "five", "six", "seven", "eight"},
     Multi = true,
-    Default = {"seven", "twelve"},
+    Default = {"eight"},
+    Callback = function(selectedValues)
+       -- Check if "one" is selected
+       if table.find(selectedValues, "one") then
+          print("You selected number one!")
+       end
+    end
  })
+
+local Toggle = Tabs.Event:AddToggle("Event", 
+{
+    Title = "AutoBuy Clover Merchant", 
+    Description = "",
+    Default = false,
+    Callback = function(state)
+        if state then
+            
+            while true do
+                for i = 1, 6 do  -- Loop through stall numbers 1 to 6
+                    for j = 1, 3 do  -- Loop to buy 3 times from each stall
+                        local args = {
+                            [1] = "CloverMerchant",
+                            [2] = i
+                        }
+                        game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
+                    end
+                end
+                wait(30)
+            end
+        else
+        end
+    end 
+})
