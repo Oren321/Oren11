@@ -149,8 +149,8 @@ local Toggle = Tabs.Event:AddToggle("Event",
                 getgenv().AutoBuyCloverMerchant = true
                 spawn(function()
                     while getgenv().AutoBuyCloverMerchant do
-                        for i = 1, 6 do  -- Loop through stall numbers 1 to 6
-                            for j = 1, 3 do  -- Loop to buy 3 times from each stall
+                        for i = 1, 6 do
+                            for j = 1, 3 do
                                 local args = {
                                     [1] = "CloverMerchant",
                                     [2] = i
@@ -158,7 +158,7 @@ local Toggle = Tabs.Event:AddToggle("Event",
                                 game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
                             end
                         end
-                        wait(30)  -- Wait for 30 seconds before running the loop again
+                        wait(30)
                     end
                 end)
             end
@@ -168,25 +168,33 @@ local Toggle = Tabs.Event:AddToggle("Event",
     end
 })
 
-local Toggle = Tabs.AutoFarm:AddToggle("AutoFarm", 
+--Event Section
+local Section = Tabs.Event:AddSection("AutoUse Clover Power Potion")
+
+--Event AutoUse
+local Toggle = Tabs.Event:AddToggle("Event", 
 {
-    Title = "AutoRoll", 
+    Title = "AutoStuff", 
     Description = "",
     Default = false,
     Callback = function(state)
+        getgenv().toggle = state
+        
         if state then
-            getgenv().Eggs_Roll = true
-            while getgenv().Eggs_Roll do
-                if game:GetService("ReplicatedStorage"):FindFirstChild("Network") then
-                    local network = game:GetService("ReplicatedStorage").Network
-                    if network:FindFirstChild("Eggs_Roll") then
-                        network.Eggs_Roll:InvokeServer()
-                    end
+            print("Toggle On")
+            spawn(function()
+                while getgenv().toggle do
+                    local args = {
+                        [1] = "19d22eb1d5ac4953bcc7dd012f29ad32",
+                        [2] = 1
+                    }
+                    
+                    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Consumables_Consume"):InvokeServer(unpack(args))
+                    wait(1) -- Adjust the delay if needed
                 end
-                task.wait()
-            end
+            end)
         else
-            getgenv().Eggs_Roll = false
+            print("Toggle Off")
         end
     end 
 })
