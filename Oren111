@@ -32,25 +32,24 @@ local Toggle = Tabs.Event:AddToggle("Event",
         if state then
             getgenv().toggle = true
             while getgenv().toggle do
-local TycoonCmds = require(game:GetService("ReplicatedStorage").Library.Client.TycoonCmds)
-local Clover = require(game:GetService("ReplicatedStorage").Library.Directory.Tycoons).Clover
-local CloverEventCmds = require(game:GetService("ReplicatedStorage").Library.Client.CloverEventCmds)
+                local TycoonCmds = require(game:GetService("ReplicatedStorage").Library.Client.TycoonCmds)
+                local Clover = require(game:GetService("ReplicatedStorage").Library.Directory.Tycoons).Clover
+                local CloverEventCmds = require(game:GetService("ReplicatedStorage").Library.Client.CloverEventCmds)
 
-while true do
-    local MINE = TycoonCmds.Get(Clover)
+                local MINE = TycoonCmds.Get(Clover)
 
-    if MINE then
-        local currentPoints = CloverEventCmds.GetEggPoints(MINE)
-        local maxPoints = CloverEventCmds.GetMaxEggPoints(MINE)
-        
-        if currentPoints >= maxPoints then
-            game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Clovers_HatchEgg"):InvokeServer()
-        end
-    else
-        warn("Buddy, unlock that tycoon stuff")
-    end
-    task.wait()
-end
+                if MINE then
+                    local currentPoints = CloverEventCmds.GetEggPoints(MINE)
+                    local maxPoints = CloverEventCmds.GetMaxEggPoints(MINE)
+                    
+                    if currentPoints >= maxPoints then
+                        -- Wait for server to respond before invoking
+                        game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Clovers_HatchEgg"):InvokeServer()
+                    end
+                end
+                -- Adding task.wait() to avoid a tight infinite loop
+                task.wait(1)
+            end
         else
             getgenv().toggle = false
         end
