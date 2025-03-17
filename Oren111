@@ -1,4 +1,4 @@
-local FredHUb = loadstring(game:HttpGet("https://raw.githubusercontent.com/idonthaveoneatm/Libraries/normal/quake/src"))()
+local FredHUb = loadstring(game:HttpGet("https://raw.githubusercontent.com/ProjectFred/Library/main/src"))()
 
 --Window
 local Main = FredHUb:Window({
@@ -8,7 +8,6 @@ local Main = FredHUb:Window({
 --AutoFarm
 local AutoFarmTab = Main:Tab({
     Name = "AutoFarm",
-    tabColor = Color3.fromHex("#71d1f5"),
     Image = "rbxassetid://10709798174"
 })
 
