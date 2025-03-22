@@ -325,23 +325,24 @@ MiniGames:Toggle({
     end
 })
 
-local selectedBOOTHANDCFRAME = {}
-
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ThievingCmds = require(ReplicatedStorage.Library.Client.ThievingCmds)
 
-local function iDandCframe(object)
-    local objectId, objectCFrame
+-- Convert stored positions into actual CFrame objects
+local BoothAndCFrame = {
+    ["1 | Royal Booth"] = CFrame.new(
+        349.891266, 16.8304901, 37.4022408,
+        -0.972637773, -4.03870763e-05, 0.23232691,
+        4.03870763e-05, 0.99999994, 0.000342917949,
+        -0.23232691, 0.000342917949, -0.972637653
+    )
+}
 
-    for key, value in pairs(object) do
-        if key == "_id" then
-            objectId = value
-        elseif key == "_cframe" then
-            objectCFrame = value
-        end
+local function getBoothIdAndCFrame(boothName)
+    if BoothAndCFrame[boothName] then
+        return boothName, BoothAndCFrame[boothName]
     end
-
-    return objectId, objectCFrame
+    return nil, nil
 end
 
 local foundObjects = {}
@@ -349,30 +350,32 @@ local foundObjects = {}
 for _, model in pairs(workspace:GetDescendants()) do
     if model:IsA("Model") then
         local thievingObject = ThievingCmds.GetObjectByModel(model)
-        if thievingObject then
-            local objectId, objectCFrame = iDandCframe(thievingObject)
-            if objectId and objectCFrame and not foundObjects[objectId] then
-                foundObjects[objectId] = true
-                selectedBOOTHANDCFRAME[objectId] = objectCFrame
+        if thievingObject and not foundObjects[thievingObject] then
+            foundObjects[thievingObject] = true
+            if thievingObject._id and thievingObject._cframe then
+                print("_id: " .. tostring(thievingObject._id))
+                print("_cframe: " .. tostring(thievingObject._cframe))
             end
         end
     end
 end
 
--- Convert IDs into a list for the dropdown
-local dropdownItems = {}
-for id, _ in pairs(selectedBOOTHANDCFRAME) do
-    table.insert(dropdownItems, tostring(id))
-end
-
--- Create the dropdown
 MiniGames:Dropdown({
-    Name = "Booth Dropdown",
-    Items = dropdownItems,
-    Default = dropdownItems[1] or nil, -- Set the first item as default if available
-    Multiselect = false,
-    Callback = function(selected)
-        print("Selected Booth:", selected)
-        print("CFrame:", selectedBOOTHANDCFRAME[selected])
+    Name = "Quake Dropdown",
+    Items = {"1 | Royal Booth", "Apple", "Banana", "Carrot", "Dingleberry"},
+    Default = "Apple",
+    Multiselect = true,
+    Callback = function(selectedItems)
+        for _, selectedItem in ipairs(selectedItems) do
+            local boothId, boothCFrame = getBoothIdAndCFrame(selectedItem)
+            if boothId and boothCFrame then
+                print("Selected Booth ID: " .. boothId)
+                print("CFrame: " .. tostring(boothCFrame))
+
+                -- Ensure the correct argument format for InvokeServer
+                local args = {boothId}
+                ReplicatedStorage:WaitForChild("Network"):WaitForChild("Thieving_Thieve"):InvokeServer(unpack(args))
+            end
+        end
     end
 })
