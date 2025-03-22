@@ -65,3 +65,314 @@ AutoFarm:Toggle({
         end
     end
 })
+
+--Event Tab
+local Event = window:Tab({
+    Name = "Event",
+    tabColor = Color3.fromRGB(255, 192, 203),
+    Image = "rbxassetid://10709769841"
+})
+
+local isToggled = false
+
+Event:Toggle({
+    Name = "Auto Mine Event",
+    Default = false,
+    Callback = function(var)
+        isToggled = var
+        if isToggled then
+            task.spawn(function()
+                while isToggled do
+                    local args1 = { [1] = true }
+                    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Mining_SetState"):InvokeServer(unpack(args1))
+                    local args2 = { [1] = 12 }
+                    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Mining_Attack"):InvokeServer(unpack(args2))
+                    task.wait()
+                end
+            end)
+        end
+    end
+})
+
+local isToggled = false
+
+Event:Toggle({
+    Name = "Auto Lunar Gift Machine",
+    Default = false,
+    Callback = function(var)
+        isToggled = var
+        if isToggled then
+            task.spawn(function()
+                while isToggled do
+                    local args = { [1] = 10 }
+                    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("LunarGiftMachine_Activate"):InvokeServer(unpack(args))
+                    task.wait(10)
+                end
+            end)
+        end
+    end
+})
+
+local isToggled = false
+
+Event:Toggle({
+    Name = "Auto Buy Space Merchant",
+    Default = false,
+    Callback = function(var)
+        isToggled = var
+        if isToggled then
+            task.spawn(function()
+                while isToggled do
+                    for i = 1, 6 do
+                        for j = 1, 5 do
+                            local args = { [1] = "SpaceMerchant", [2] = i }
+                            game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
+                            task.wait(0.5)
+                        end
+                    end
+                    task.wait(30)
+                end
+            end)
+        end
+    end
+})
+
+local isToggled = false
+
+Event:Toggle({
+    Name = "Auto Consume All Space Stuff",
+    Default = false,
+    Callback = function(var)
+        isToggled = var
+        if isToggled then
+            task.spawn(function()
+                while isToggled do
+                    local consumables = {
+                        { "6bc58c5a04004255a33415ee8f33bb99", 1 },
+                        { "62ecdea2f79f4b87ba990c38027351fc", 1 }
+                    }
+
+                    for _, consumable in ipairs(consumables) do
+                        local args = {
+                            [1] = consumable[1],
+                            [2] = consumable[2]
+                        }
+                        game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Consumables_Consume"):InvokeServer(unpack(args))
+                        task.wait(0.5)
+                    end
+                    task.wait(1)
+                end
+            end)
+        end
+    end
+})
+
+local isToggled = false
+
+Event:Toggle({
+    Name = "Auto Event Upgrade Purchase",
+    Default = false,
+    Callback = function(var)
+        isToggled = var
+        if isToggled then
+            task.spawn(function()
+                while isToggled do
+                    local upgrades = {
+                        "HUGE EVENT",
+                        "Comet Egg Luck I",
+                        "Astronaut Merchant Refresh Speed I",
+                        "Lunar Coins I",
+                        "Comet Egg Luck II",
+                        "Astronaut Merchant Price I",
+                        "Lunar Coins II",
+                        "Comet Egg Luck III",
+                        "Astronaut Merchant Loot I",
+                        "Astronaut Merchant Refresh Speed II",
+                        "Astronaut Merchant Loot II",
+                        "Lunar Coins III",
+                        "Comet Shower Luck I",
+                        "Comet Egg Luck IV",
+                        "Comet Egg Luck V",
+                        "Event Huge Luck I",
+                        "Comet Shower Luck II",
+                        "Astronaut Merchant Price II",
+                        "Astronaut Merchant Price III",
+                        "Astronaut Merchant Loot III",
+                        "Astronaut Merchant Refresh Speed III",
+                        "Event Huge Luck II",
+                        "Comet Shower Luck III",
+                        "Lunar Coins IV",
+                        "Event Huge Luck III",
+                        "Event Titanic Luck I",
+                        "Event Titanic Luck II",
+                        "Event Titanic Luck III"
+                    }
+                    for _, upgrade in ipairs(upgrades) do
+                        local args = { [1] = upgrade }
+                        game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Upgrades_Purchase"):InvokeServer(unpack(args))
+                        task.wait(0.5)
+                    end
+                    task.wait(1)
+                end
+            end)
+        end
+    end
+})
+
+Event:Label("Sloth If you see this im asleep the script may need some fixing")
+
+--Mini Games Tab
+local MiniGames = window:Tab({
+    Name = "Mini Games",
+    tabColor = Color3.fromRGB(255, 192, 203),
+    Image = "rbxassetid://10709769841"
+})
+
+MiniGames:Label("Fishing!")
+
+local FishingSpots = {
+    "Default",
+    "Ice",
+    "Kraken",
+    "Corrupted",
+}
+
+MiniGames:Dropdown({
+    Name = "Select Fishing Spot",
+    Default = "Default",
+    Items = FishingSpots,
+    Multiselect = false,
+    Callback = function(Value)
+        selectedFishingSpot = Value
+    end
+})
+
+local isToggled = false
+
+MiniGames:Toggle({
+    Name = "Auto Fish",
+    Default = false,
+    Callback = function(var)
+        isToggled = var
+        if isToggled then
+            while isToggled do
+                local args = {
+                    [1] = selectedFishingSpot
+                }
+                game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Fishing_Fish"):InvokeServer(unpack(args))
+                game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Fishing_Success"):FireServer()
+                task.wait()
+            end
+        end
+    end
+})
+
+local isToggled = false
+
+MiniGames:Toggle({
+    Name = "Claim Fishing Storage Loot",
+    Default = false,
+    Callback = function(var)
+        isToggled = var
+        while isToggled do
+            game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Fishing_FishermanClaim"):InvokeServer()
+            task.wait(5)
+        end
+    end
+})
+
+MiniGames:Label("Mining!")
+
+local MiningSpots = {
+    "Dirt Ore",
+    "Stone Ore",
+    "Bronze Ore",
+    "Iron Ore",
+    "Gold Ore",
+    "Emerald Ore",
+    "Obsidian Ore",
+    "Runic Ore",
+    "Magma Ore",
+}
+
+MiniGames:Dropdown({
+    Name = "Select Mining Spot",
+    Default = "Default",
+    Items = MiningSpots,
+    Multiselect = false,
+    Callback = function(Value)
+        selectedMiningSpot = Value
+    end
+})
+
+local isToggled = false
+
+MiniGames:Toggle({
+    Name = "Auto Mine",
+    Default = false,
+    Callback = function(var)
+        isToggled = var
+        if isToggled then
+            while isToggled do
+                local args2 = {
+                    [1] = b
+                }
+                    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Mining_SetState"):InvokeServer(true)
+                    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Mining_Attack"):InvokeServer(unpack(args2))
+                task.wait()
+            end
+        end
+    end
+})
+
+local selectedBOOTHANDCFRAME = {}
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ThievingCmds = require(ReplicatedStorage.Library.Client.ThievingCmds)
+
+local function iDandCframe(object)
+    local objectId, objectCFrame
+
+    for key, value in pairs(object) do
+        if key == "_id" then
+            objectId = value
+        elseif key == "_cframe" then
+            objectCFrame = value
+        end
+    end
+
+    return objectId, objectCFrame
+end
+
+local foundObjects = {}
+
+for _, model in pairs(workspace:GetDescendants()) do
+    if model:IsA("Model") then
+        local thievingObject = ThievingCmds.GetObjectByModel(model)
+        if thievingObject then
+            local objectId, objectCFrame = iDandCframe(thievingObject)
+            if objectId and objectCFrame and not foundObjects[objectId] then
+                foundObjects[objectId] = true
+                selectedBOOTHANDCFRAME[objectId] = objectCFrame
+            end
+        end
+    end
+end
+
+-- Convert IDs into a list for the dropdown
+local dropdownItems = {}
+for id, _ in pairs(selectedBOOTHANDCFRAME) do
+    table.insert(dropdownItems, tostring(id))
+end
+
+-- Create the dropdown
+MiniGames:Dropdown({
+    Name = "Booth Dropdown",
+    Items = dropdownItems,
+    Default = dropdownItems[1] or nil, -- Set the first item as default if available
+    Multiselect = false,
+    Callback = function(selected)
+        print("Selected Booth:", selected)
+        print("CFrame:", selectedBOOTHANDCFRAME[selected])
+    end
+})
