@@ -1,381 +1,55 @@
--- Gui Source
-local PrivateScript = loadstring(game:HttpGet("https://raw.githubusercontent.com/OrenSck/Src/refs/heads/main/Gui", true))()
-
--- Making The Window
-local window = PrivateScript:Window({
-    Title = "Pets Go | Private Script", 
-    isMobile = false,
-    Size = {
-        X = 550,
-        Y = 400
-    },
-    CustomTheme = {
-        defaultTab = Color3.fromHex("#a49ae6"),
-        background = Color3.fromRGB(40, 44, 50),
-        secondaryBackground = Color3.fromRGB(49, 56, 66),
-        tertiaryBackground = Color3.fromRGB(57, 63, 75),
-        text = Color3.fromRGB(220,221,225),
-        image = Color3.fromRGB(220,221,225),
-        placeholder = Color3.fromRGB(165,166,169),
-        close = Color3.fromRGB(190, 100, 105)
-    },
-    KeyCode = Enum.KeyCode.T
-})
-
---AutoFarm Tab
-local AutoFarm = window:Tab({
-    Name = "AutoFarm",
-    tabColor = Color3.fromRGB(255, 192, 203),
-    Image = "rbxassetid://10709769841"
-})
-
-local isToggled = false
-
-AutoFarm:Toggle({
-   Name = "Auto Roll",
-   Default = false,
-   Callback = function(var)
-       isToggled = var
-       while isToggled do
-           game:GetService("ReplicatedStorage").Network.Eggs_Roll:InvokeServer()
-           task.wait()
-       end
-   end
-})
-
-local isToggled = false
-
-AutoFarm:Toggle({
-    Name = "Auto Collect Orbs",
-    Default = false,
-    Callback = function(var)
-        isToggled = var
-        if isToggled then
-            spawn(function()
-                while isToggled do
-                    local orbs = workspace.__THINGS.Orbs:GetChildren()
-                    for _, orb in pairs(orbs) do
-                        local args = { [1] = { orb.Name } }
-                        game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Orbs: Collect"):FireServer(unpack(args))
-                        orb:Destroy()
-                    end
-                    task.wait()
-                end
-            end)
-        end
-    end
-})
-
---Event Tab
-local Event = window:Tab({
-    Name = "Event",
-    tabColor = Color3.fromRGB(255, 192, 203),
-    Image = "rbxassetid://10709769841"
-})
-
-local isToggled = false
-
-Event:Toggle({
-    Name = "Auto Mine Event",
-    Default = false,
-    Callback = function(var)
-        isToggled = var
-        if isToggled then
-            task.spawn(function()
-                while isToggled do
-                    local args1 = { [1] = true }
-                    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Mining_SetState"):InvokeServer(unpack(args1))
-                    local args2 = { [1] = 12 }
-                    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Mining_Attack"):InvokeServer(unpack(args2))
-                    task.wait()
-                end
-            end)
-        end
-    end
-})
-
-local isToggled = false
-
-Event:Toggle({
-    Name = "Auto Lunar Gift Machine",
-    Default = false,
-    Callback = function(var)
-        isToggled = var
-        if isToggled then
-            task.spawn(function()
-                while isToggled do
-                    local args = { [1] = 10 }
-                    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("LunarGiftMachine_Activate"):InvokeServer(unpack(args))
-                    task.wait(10)
-                end
-            end)
-        end
-    end
-})
-
-local isToggled = false
-
-Event:Toggle({
-    Name = "Auto Buy Space Merchant",
-    Default = false,
-    Callback = function(var)
-        isToggled = var
-        if isToggled then
-            task.spawn(function()
-                while isToggled do
-                    for i = 1, 6 do
-                        for j = 1, 5 do
-                            local args = { [1] = "SpaceMerchant", [2] = i }
-                            game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
-                            task.wait(0.5)
-                        end
-                    end
-                    task.wait(30)
-                end
-            end)
-        end
-    end
-})
-
-local isToggled = false
-
-Event:Toggle({
-    Name = "Auto Consume All Space Stuff",
-    Default = false,
-    Callback = function(var)
-        isToggled = var
-        if isToggled then
-            task.spawn(function()
-                while isToggled do
-                    local consumables = {
-                        { "6bc58c5a04004255a33415ee8f33bb99", 1 },
-                        { "62ecdea2f79f4b87ba990c38027351fc", 1 }
-                    }
-
-                    for _, consumable in ipairs(consumables) do
-                        local args = {
-                            [1] = consumable[1],
-                            [2] = consumable[2]
-                        }
-                        game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Consumables_Consume"):InvokeServer(unpack(args))
-                        task.wait(0.5)
-                    end
-                    task.wait(1)
-                end
-            end)
-        end
-    end
-})
-
-local isToggled = false
-
-Event:Toggle({
-    Name = "Auto Event Upgrade Purchase",
-    Default = false,
-    Callback = function(var)
-        isToggled = var
-        if isToggled then
-            task.spawn(function()
-                while isToggled do
-                    local upgrades = {
-                        "HUGE EVENT",
-                        "Comet Egg Luck I",
-                        "Astronaut Merchant Refresh Speed I",
-                        "Lunar Coins I",
-                        "Comet Egg Luck II",
-                        "Astronaut Merchant Price I",
-                        "Lunar Coins II",
-                        "Comet Egg Luck III",
-                        "Astronaut Merchant Loot I",
-                        "Astronaut Merchant Refresh Speed II",
-                        "Astronaut Merchant Loot II",
-                        "Lunar Coins III",
-                        "Comet Shower Luck I",
-                        "Comet Egg Luck IV",
-                        "Comet Egg Luck V",
-                        "Event Huge Luck I",
-                        "Comet Shower Luck II",
-                        "Astronaut Merchant Price II",
-                        "Astronaut Merchant Price III",
-                        "Astronaut Merchant Loot III",
-                        "Astronaut Merchant Refresh Speed III",
-                        "Event Huge Luck II",
-                        "Comet Shower Luck III",
-                        "Lunar Coins IV",
-                        "Event Huge Luck III",
-                        "Event Titanic Luck I",
-                        "Event Titanic Luck II",
-                        "Event Titanic Luck III"
-                    }
-                    for _, upgrade in ipairs(upgrades) do
-                        local args = { [1] = upgrade }
-                        game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Upgrades_Purchase"):InvokeServer(unpack(args))
-                        task.wait(0.5)
-                    end
-                    task.wait(1)
-                end
-            end)
-        end
-    end
-})
-
-Event:Label("Sloth If you see this im asleep the script may need some fixing")
-
---Mini Games Tab
-local MiniGames = window:Tab({
-    Name = "Mini Games",
-    tabColor = Color3.fromRGB(255, 192, 203),
-    Image = "rbxassetid://10709769841"
-})
-
-MiniGames:Label("Fishing!")
-
-local FishingSpots = {
-    "Default",
-    "Ice",
-    "Kraken",
-    "Corrupted",
-}
-
-MiniGames:Dropdown({
-    Name = "Select Fishing Spot",
-    Default = "Default",
-    Items = FishingSpots,
-    Multiselect = false,
-    Callback = function(Value)
-        selectedFishingSpot = Value
-    end
-})
-
-local isToggled = false
-
-MiniGames:Toggle({
-    Name = "Auto Fish",
-    Default = false,
-    Callback = function(var)
-        isToggled = var
-        if isToggled then
-            while isToggled do
-                local args = {
-                    [1] = selectedFishingSpot
-                }
-                game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Fishing_Fish"):InvokeServer(unpack(args))
-                game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Fishing_Success"):FireServer()
-                task.wait()
-            end
-        end
-    end
-})
-
-local isToggled = false
-
-MiniGames:Toggle({
-    Name = "Claim Fishing Storage Loot",
-    Default = false,
-    Callback = function(var)
-        isToggled = var
-        while isToggled do
-            game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Fishing_FishermanClaim"):InvokeServer()
-            task.wait(5)
-        end
-    end
-})
-
-MiniGames:Label("Mining!")
-
-local MiningSpots = {
-    "Dirt Ore",
-    "Stone Ore",
-    "Bronze Ore",
-    "Iron Ore",
-    "Gold Ore",
-    "Emerald Ore",
-    "Obsidian Ore",
-    "Runic Ore",
-    "Magma Ore",
-}
-
-MiniGames:Dropdown({
-    Name = "Select Mining Spot",
-    Default = "Default",
-    Items = MiningSpots,
-    Multiselect = false,
-    Callback = function(Value)
-        selectedMiningSpot = Value
-    end
-})
-
-local isToggled = false
-
-MiniGames:Toggle({
-    Name = "Auto Mine",
-    Default = false,
-    Callback = function(var)
-        isToggled = var
-        if isToggled then
-            while isToggled do
-                local args2 = {
-                    [1] = b
-                }
-                    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Mining_SetState"):InvokeServer(true)
-                    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Mining_Attack"):InvokeServer(unpack(args2))
-                task.wait()
-            end
-        end
-    end
-})
-
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local ThievingCmds = require(ReplicatedStorage.Library.Client.ThievingCmds)
+local petsFolder = workspace.__THINGS.Pets
+local breakablesFolder = workspace.__THINGS.Breakables
 
--- Convert stored positions into actual CFrame objects
-local BoothAndCFrame = {
-    ["1 | Royal Booth"] = CFrame.new(
-        349.891266, 16.8304901, 37.4022408,
-        -0.972637773, -4.03870763e-05, 0.23232691,
-        4.03870763e-05, 0.99999994, 0.000342917949,
-        -0.23232691, 0.000342917949, -0.972637653
-    )
-}
+local petIDs = {}
+local pinataID = nil
 
-local function getBoothIdAndCFrame(boothName)
-    if BoothAndCFrame[boothName] then
-        return boothName, BoothAndCFrame[boothName]
-    end
-    return nil, nil
-end
-
-local foundObjects = {}
-
-for _, model in pairs(workspace:GetDescendants()) do
-    if model:IsA("Model") then
-        local thievingObject = ThievingCmds.GetObjectByModel(model)
-        if thievingObject and not foundObjects[thievingObject] then
-            foundObjects[thievingObject] = true
-            if thievingObject._id and thievingObject._cframe then
-                print("_id: " .. tostring(thievingObject._id))
-                print("_cframe: " .. tostring(thievingObject._cframe))
-            end
-        end
+for _, pet in pairs(petsFolder:GetChildren()) do
+    if pet:IsA("Model") then
+        table.insert(petIDs, pet.Name)
     end
 end
 
-MiniGames:Dropdown({
-    Name = "Quake Dropdown",
-    Items = {"1 | Royal Booth", "Apple", "Banana", "Carrot", "Dingleberry"},
-    Default = "Apple",
-    Multiselect = true,
-    Callback = function(selectedItems)
-        for _, selectedItem in ipairs(selectedItems) do
-            local boothId, boothCFrame = getBoothIdAndCFrame(selectedItem)
-            if boothId and boothCFrame then
-                print("Selected Booth ID: " .. boothId)
-                print("CFrame: " .. tostring(boothCFrame))
+local function attackTarget(targetID)
+    ReplicatedStorage.Network.Breakables_PlayerDealDamage:FireServer(targetID)
+    for i = 1, math.min(5, #petIDs) do
+        ReplicatedStorage.Network.Breakables_JoinPetBulk:FireServer({[1] = {[petIDs[i]] = targetID}})
+    end
+end
 
-                -- Ensure the correct argument format for InvokeServer
-                local args = {boothId}
-                ReplicatedStorage:WaitForChild("Network"):WaitForChild("Thieving_Thieve"):InvokeServer(unpack(args))
+while true do
+    local bossFound = false
+    local blackFound = false
+    local targetID = nil
+
+    if pinataID then
+        attackTarget(pinataID)
+        task.wait(0.5)
+    else
+        for _, breakable in pairs(breakablesFolder:GetChildren()) do
+            if breakable:IsA("Model") then
+                local attributes = breakable:GetAttributes()
+                for _, value in pairs(attributes) do
+                    local attr = tostring(value)
+                    if attr == "Pinata Boss" then
+                        pinataID = tonumber(breakable.Name)
+                        bossFound = true
+                        break
+                    elseif attr == "Black Lucky Block" then
+                        targetID = tonumber(breakable.Name)
+                        blackFound = true
+                        break
+                    end
+                end
+                if bossFound then break end
             end
         end
+
+        if not bossFound and blackFound and targetID then
+            attackTarget(targetID)
+            task.wait(0.5)
+        end
     end
-})
+    task.wait(0.1)
+end
