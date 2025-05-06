@@ -1,55 +1,110 @@
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local petsFolder = workspace.__THINGS.Pets
-local breakablesFolder = workspace.__THINGS.Breakables
+local lib = loadstring(game:HttpGet("https://raw.githubusercontent.com/SaintRemys/Wizard-V2/refs/heads/main/WizardV2.lua"))()
+local win = lib:NewWindow("Auto Minigames")
+local sec = win:NewSection("Claw Machine")
 
-local petIDs = {}
-local pinataID = nil
+local targetCFrame = CFrame.new(
+	869.915955, 91.7505875, 1123.19604,
+	-1.00000024, 0, 0,
+	0, 1, 0,
+	0, 0, -1.00000024
+)
 
-for _, pet in pairs(petsFolder:GetChildren()) do
-    if pet:IsA("Model") then
-        table.insert(petIDs, pet.Name)
-    end
+local function SkipCooldown()
+	local skip = {
+		"SkipMinigameCooldown",
+		"Robot Claw"
+	}
+	game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer(unpack(skip))
+end
+sec:CreateButton("Skip Cooldown", function()
+	SkipCooldown()
+end)
+
+local function StartGame()
+	local startGameArgs = {
+		"StartMinigame",
+		"Robot Claw",
+		"Insane"
+	}
+	game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer(unpack(startGameArgs))
 end
 
-local function attackTarget(targetID)
-    ReplicatedStorage.Network.Breakables_PlayerDealDamage:FireServer(targetID)
-    for i = 1, math.min(5, #petIDs) do
-        ReplicatedStorage.Network.Breakables_JoinPetBulk:FireServer({[1] = {[petIDs[i]] = targetID}})
-    end
+sec:CreateButton("Start Game", function()
+	StartGame()
+end)
+
+sec:CreateButton("Auto Drop", function()
+	local clawmachine = workspace:FindFirstChild("ClawMachine")
+	if clawmachine then
+		print("Found")
+	else
+		print("Not Found")
+	end
+
+	local claw = nil
+	if clawmachine then
+		local clawModel = clawmachine:FindFirstChild("Claw")
+		if clawModel and clawModel:IsA("Model") and clawModel.PrimaryPart then
+			claw = clawModel.PrimaryPart
+			print("Claw Found")
+		end
+	end
+
+	if clawmachine and claw then
+		local capnum = #clawmachine:GetChildren() - 1
+		local waittime = 50 / capnum
+		for _, capsule in ipairs(clawmachine:GetChildren()) do
+			if capsule:IsA("Model") and capsule.Name == "Capsule" then
+				local part = capsule:FindFirstChildOfClass("MeshPart")
+				local e = claw:FindFirstChild("IndicatorPart")
+				part.CFrame = targetCFrame
+				print("Moved capsule:", capsule.Name)
+				wait(4)
+			end
+		end
+	end
+end)
+
+local function MainLoop()
+	SkipCooldown()
+	wait(0.3)
+	StartGame()
+	wait(4)
+	local clawmachine = workspace:FindFirstChild("ClawMachine")
+	if clawmachine then
+		print("Found")
+	else
+		print("Not Found")
+	end
+
+	local claw = nil
+	if clawmachine then
+		local clawModel = clawmachine:FindFirstChild("Claw")
+		if clawModel and clawModel:IsA("Model") and clawModel.PrimaryPart then
+			claw = clawModel.PrimaryPart
+			print("Claw Found")
+		end
+	end
+
+	if clawmachine and claw then
+		local capnum = #clawmachine:GetChildren() - 1
+		local waittime = 55 / capnum
+		for _, capsule in ipairs(clawmachine:GetChildren()) do
+			if capsule:IsA("Model") and capsule.Name == "Capsule" then
+				local part = capsule:FindFirstChildOfClass("MeshPart")
+				local e = claw:FindFirstChild("IndicatorPart")
+				part.CFrame = targetCFrame
+				print("Moved capsule:", capsule.Name)
+				wait(4)
+			end
+		end
+	end
+	print("Claw machine complete, waiting 10s")
+	wait(10)
 end
 
-while true do
-    local bossFound = false
-    local blackFound = false
-    local targetID = nil
-
-    if pinataID then
-        attackTarget(pinataID)
-        task.wait(0.5)
-    else
-        for _, breakable in pairs(breakablesFolder:GetChildren()) do
-            if breakable:IsA("Model") then
-                local attributes = breakable:GetAttributes()
-                for _, value in pairs(attributes) do
-                    local attr = tostring(value)
-                    if attr == "Pinata Boss" then
-                        pinataID = tonumber(breakable.Name)
-                        bossFound = true
-                        break
-                    elseif attr == "Black Lucky Block" then
-                        targetID = tonumber(breakable.Name)
-                        blackFound = true
-                        break
-                    end
-                end
-                if bossFound then break end
-            end
-        end
-
-        if not bossFound and blackFound and targetID then
-            attackTarget(targetID)
-            task.wait(0.5)
-        end
-    end
-    task.wait(0.1)
-end
+sec:CreateToggle("Full Auto", function()
+	while true do
+		MainLoop()
+	end
+end)
